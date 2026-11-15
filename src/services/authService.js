@@ -29,9 +29,11 @@ function validateRegister({ email, password, name }) {
 }
 
 async function register(tenant, input = {}) {
-  validateRegister(input);
+  // normalize อีเมลก่อนตรวจรูปแบบ (กันช่องว่างหัวท้ายทำให้สมัครไม่ผ่าน)
+  const email =
+    typeof input.email === 'string' ? input.email.trim().toLowerCase() : input.email;
+  validateRegister({ ...input, email });
 
-  const email = input.email.trim().toLowerCase();
   const passwordHash = await bcrypt.hash(input.password, SALT_ROUNDS);
 
   let user;
