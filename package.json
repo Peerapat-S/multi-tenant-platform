@@ -7,17 +7,18 @@
     "test": "tests"
   },
   "scripts": {
-  "test": "jest --runInBand",
-  "test:unit": "jest tests/unit",
-  "test:api": "jest tests/api --runInBand",
-  "test:coverage": "jest tests/unit --coverage"
-},
+    "test": "jest --runInBand",
+    "test:unit": "jest tests/unit",
+    "test:api": "jest tests/api --runInBand",
+    "test:coverage": "jest tests/unit --coverage"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
     "dotenv": "^18.0.10",
     "express": "^5.3.0",
     "jsonwebtoken": "^9.0.3",

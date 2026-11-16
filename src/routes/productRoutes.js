@@ -2,13 +2,13 @@ const router = require('express').Router();
 const controller = require('../controllers/productController');
 const { authenticate, authorize } = require('../middlewares/auth');
 
-// ต้อง login ทุก route; ดูได้ทุก role, เขียน/แก้/ลบเฉพาะ admin
-router.use(authenticate);
-
+// ดูสินค้า: เปิดสาธารณะ (หน้าร้านค้า) แต่ยังต้องระบุแบรนด์ด้วย X-Tenant-ID
 router.get('/', controller.list);
 router.get('/:id', controller.get);
-router.post('/', authorize('admin'), controller.create);
-router.put('/:id', authorize('admin'), controller.update);
-router.delete('/:id', authorize('admin'), controller.remove);
+
+// เขียน/แก้/ลบ: ต้อง login และเป็น admin
+router.post('/', authenticate, authorize('admin'), controller.create);
+router.put('/:id', authenticate, authorize('admin'), controller.update);
+router.delete('/:id', authenticate, authorize('admin'), controller.remove);
 
 module.exports = router;

@@ -30,4 +30,16 @@ describe('Tenant resolution', () => {
     expect(res.status).toBe(200);
     expect(res.body.tenant.slug).toBe('brand-b');
   });
+
+  test('GET /api/tenants เปิดสาธารณะ ไม่ต้องมี X-Tenant-ID และไม่ส่ง id', async () => {
+    const res = await api().get('/api/tenants');
+    expect(res.status).toBe(200);
+    expect(res.body.items).toEqual(
+      expect.arrayContaining([
+        { slug: 'brand-a', name: 'Brand A' },
+        { slug: 'brand-b', name: 'Brand B' },
+      ])
+    );
+    expect(res.body.items.every((t) => !('id' in t))).toBe(true);
+  });
 });
