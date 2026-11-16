@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { formatPrice } from '../api.js';
 import { useAuth } from '../auth.jsx';
 import ProductForm from '../components/ProductForm.jsx';
+import ProductImage from '../components/ProductImage.jsx';
 
 const LIMIT = 10;
 
@@ -78,6 +79,7 @@ export default function AdminProducts() {
         <table>
           <thead>
             <tr>
+              <th></th>
               <th>ชื่อสินค้า</th>
               <th className="num">ราคา</th>
               <th className="num">สต็อก</th>
@@ -87,6 +89,7 @@ export default function AdminProducts() {
           <tbody>
             {items.map((p) => (
               <tr key={p.id}>
+                <td><ProductImage product={p} small /></td>
                 <td>{p.name}</td>
                 <td className="num">{formatPrice(p.price)}</td>
                 <td className="num">{p.stock}</td>
@@ -102,7 +105,7 @@ export default function AdminProducts() {
             ))}
             {!loading && items.length === 0 && (
               <tr>
-                <td colSpan="4" className="muted">
+                <td colSpan="5" className="muted">
                   ยังไม่มีสินค้า
                 </td>
               </tr>

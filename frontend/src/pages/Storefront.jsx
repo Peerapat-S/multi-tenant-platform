@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { request, formatPrice } from '../api.js';
 import { useAuth } from '../auth.jsx';
+import ProductImage from '../components/ProductImage.jsx';
 
 const LIMIT = 12;
 
@@ -40,7 +41,7 @@ export default function Storefront() {
       <div className="grid">
         {items.map((p) => (
           <article key={p.id} className="card product">
-            <div className="thumb">{p.name.charAt(0).toUpperCase()}</div>
+            <ProductImage product={p} />
             <h3>{p.name}</h3>
             {p.description && <p className="muted">{p.description}</p>}
             <div className="meta">

@@ -64,6 +64,58 @@ describe('productService.create', () => {
   });
 });
 
+describe('productService: imageUrl', () => {
+  test('สร้างพร้อม imageUrl -> ส่ง image_url ให้ model (ตัดช่องว่างหน้าหลัง)', async () => {
+    Product.create.mockResolvedValue({ id: ID });
+    await productService.create(tenant, { name: 'Shirt', price: 1, imageUrl: ' https://img.example.com/a.jpg ' });
+    expect(Product.create).toHaveBeenCalledWith(
+      'tenant-1',
+      expect.objectContaining({ image_url: 'https://img.example.com/a.jpg' })
+    );
+  });
+
+  test.each([
+    ['สตริงว่าง', ''],
+    ['ช่องว่างล้วน', '   '],
+    ['null', null],
+  ])('imageUrl เป็น %s -> เก็บเป็น null (ไม่มีรูป)', async (_label, value) => {
+    Product.create.mockResolvedValue({ id: ID });
+    await productService.create(tenant, { name: 'Shirt', price: 1, imageUrl: value });
+    expect(Product.create).toHaveBeenCalledWith('tenant-1', expect.objectContaining({ image_url: null }));
+  });
+
+  test.each([
+    ['ไม่ใช่ URL', 'not a url'],
+    ['โปรโตคอลที่ไม่อนุญาต (javascript:)', 'javascript:alert(1)'],
+    ['โปรโตคอลที่ไม่อนุญาต (ftp:)', 'ftp://example.com/a.jpg'],
+    ['ไม่ใช่สตริง', 123],
+    ['ยาวเกิน 2048 ตัวอักษร', 'https://example.com/' + 'a'.repeat(2100)],
+  ])('imageUrl ไม่ถูกต้อง (%s) -> 400', async (_label, value) => {
+    await expect(
+      productService.create(tenant, { name: 'x', price: 1, imageUrl: value })
+    ).rejects.toMatchObject({ status: 400 });
+    expect(Product.create).not.toHaveBeenCalled();
+  });
+
+  test('แก้ไข: ส่ง imageUrl อย่างเดียวก็นับเป็น field ที่แก้', async () => {
+    Product.update.mockResolvedValue({ id: ID });
+    await productService.update(tenant, ID, { imageUrl: 'http://img.example.com/b.png' });
+    expect(Product.update).toHaveBeenCalledWith('tenant-1', ID, { image_url: 'http://img.example.com/b.png' });
+  });
+
+  test('แก้ไข: imageUrl เป็นสตริงว่าง -> ส่ง null เพื่อลบรูป', async () => {
+    Product.update.mockResolvedValue({ id: ID });
+    await productService.update(tenant, ID, { imageUrl: '' });
+    expect(Product.update).toHaveBeenCalledWith('tenant-1', ID, { image_url: null });
+  });
+
+  test('แก้ไข: ไม่ส่ง imageUrl -> ไม่มี image_url ในข้อมูลที่ส่งให้ model (คงรูปเดิม)', async () => {
+    Product.update.mockResolvedValue({ id: ID });
+    await productService.update(tenant, ID, { price: 10 });
+    expect(Product.update.mock.calls.at(-1)[2]).not.toHaveProperty('image_url');
+  });
+});
+
 describe('productService.update', () => {
   test('ไม่ส่ง field ใดเลย -> 400', async () => {
     await expect(productService.update(tenant, ID, {})).rejects.toMatchObject({ status: 400 });

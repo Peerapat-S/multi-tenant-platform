@@ -6,6 +6,7 @@ function product(p) {
     description: p.description,
     price: Number(p.price),
     stock: p.stock,
+    imageUrl: p.image_url ?? null,
     createdAt: p.created_at,
   };
 }

@@ -8,6 +8,31 @@ function parsePaging({ page, limit } = {}) {
   return { page: p, limit: l, offset: (p - 1) * l };
 }
 
+const MAX_IMAGE_URL_LENGTH = 2048;
+
+// คืน null ถ้าไม่มีรูป (null หรือสตริงว่าง) ไม่งั้นต้องเป็น URL แบบ http/https
+function parseImageUrl(value) {
+  if (value === null) return null;
+  if (typeof value !== 'string') {
+    throw new HttpError(400, 'Image URL must be a string');
+  }
+  const url = value.trim();
+  if (url === '') return null;
+  if (url.length > MAX_IMAGE_URL_LENGTH) {
+    throw new HttpError(400, 'Image URL is too long');
+  }
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch {
+    throw new HttpError(400, 'Image URL must be a valid http(s) URL');
+  }
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+    throw new HttpError(400, 'Image URL must be a valid http(s) URL');
+  }
+  return url;
+}
+
 // ตรวจเฉพาะ field ที่ส่งมา; requireAll=true ใช้ตอนสร้าง
 function validate(input, { requireAll }) {
   const out = {};
@@ -37,6 +62,9 @@ function validate(input, { requireAll }) {
       throw new HttpError(400, 'Stock must be an integer >= 0');
     }
     out.stock = stock;
+  }
+  if (input.imageUrl !== undefined) {
+    out.image_url = parseImageUrl(input.imageUrl);
   }
   return out;
 }

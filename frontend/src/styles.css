@@ -56,6 +56,9 @@ select, input, textarea {
   height: 110px; border-radius: 8px; display: grid; place-items: center;
   background: var(--accent-soft); color: var(--accent); font-size: 2.5rem; font-weight: 700;
 }
+.thumb.img { width: 100%; object-fit: cover; display: block; }
+.thumb.small { height: 40px; width: 40px; font-size: 1.1rem; border-radius: 6px; }
+.thumb-preview img { max-height: 120px; max-width: 100%; border-radius: 8px; border: 1px solid var(--border); }
 .meta { display: flex; justify-content: space-between; align-items: center; }
 .badge { font-size: 0.75rem; background: var(--accent-soft); color: var(--accent); padding: 0.15rem 0.5rem; border-radius: 99px; }
 .badge.out { background: #fdecea; color: var(--danger); }

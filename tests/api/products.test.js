@@ -158,3 +158,47 @@ describe('admin: แก้และลบ', () => {
     expect(after.status).toBe(404);
   });
 });
+
+describe('รูปสินค้า (imageUrl)', () => {
+  const IMG = 'https://img.example.com/shirt.jpg';
+
+  test('สินค้าที่ไม่มีรูป -> imageUrl เป็น null', async () => {
+    expect(product.imageUrl).toBeNull();
+  });
+
+  test('admin สร้างสินค้าพร้อมรูป และคนทั่วไปเห็นรูปในรายการ', async () => {
+    const created = await as('brand-a', adminA)(api().post('/api/products'))
+      .send({ name: unique('img'), price: 10, imageUrl: IMG });
+    expect(created.status).toBe(201);
+    expect(created.body.product.imageUrl).toBe(IMG);
+
+    const res = await api().get(`/api/products/${created.body.product.id}`).set('X-Tenant-ID', 'brand-a');
+    expect(res.body.product.imageUrl).toBe(IMG);
+  });
+
+  test('imageUrl ไม่ถูกต้อง -> 400', async () => {
+    const res = await as('brand-a', adminA)(api().post('/api/products'))
+      .send({ name: unique('bad'), price: 10, imageUrl: 'javascript:alert(1)' });
+    expect(res.status).toBe(400);
+  });
+
+  test('แก้ไขราคาอย่างเดียว รูปเดิมต้องไม่หาย', async () => {
+    const created = await as('brand-a', adminA)(api().post('/api/products'))
+      .send({ name: unique('keep'), price: 10, imageUrl: IMG });
+    const id = created.body.product.id;
+
+    const res = await as('brand-a', adminA)(api().put(`/api/products/${id}`)).send({ price: 20 });
+    expect(res.status).toBe(200);
+    expect(res.body.product).toMatchObject({ price: 20, imageUrl: IMG });
+  });
+
+  test('ส่ง imageUrl เป็นสตริงว่าง -> ลบรูป', async () => {
+    const created = await as('brand-a', adminA)(api().post('/api/products'))
+      .send({ name: unique('clear'), price: 10, imageUrl: IMG });
+    const id = created.body.product.id;
+
+    const res = await as('brand-a', adminA)(api().put(`/api/products/${id}`)).send({ imageUrl: '' });
+    expect(res.status).toBe(200);
+    expect(res.body.product.imageUrl).toBeNull();
+  });
+});

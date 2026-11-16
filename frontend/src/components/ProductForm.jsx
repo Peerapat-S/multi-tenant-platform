@@ -5,6 +5,8 @@ export default function ProductForm({ initial, onSave, onCancel }) {
   const [description, setDescription] = useState(initial?.description ?? '');
   const [price, setPrice] = useState(initial ? String(initial.price) : '');
   const [stock, setStock] = useState(initial ? String(initial.stock) : '0');
+  const [imageUrl, setImageUrl] = useState(initial?.imageUrl ?? '');
+  const [previewFailed, setPreviewFailed] = useState(false);
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -13,6 +15,9 @@ export default function ProductForm({ initial, onSave, onCancel }) {
     setError('');
     if (!name.trim()) return setError('กรุณากรอกชื่อสินค้า');
     if (price === '' || Number(price) < 0) return setError('ราคาต้องเป็นตัวเลขตั้งแต่ 0 ขึ้นไป');
+    if (imageUrl.trim() && !/^https?:\/\//i.test(imageUrl.trim())) {
+      return setError('URL รูปภาพต้องขึ้นต้นด้วย http:// หรือ https://');
+    }
 
     setSaving(true);
     try {
@@ -21,6 +26,7 @@ export default function ProductForm({ initial, onSave, onCancel }) {
         description,
         price: Number(price),
         stock: Number(stock || 0),
+        imageUrl: imageUrl.trim(), // สตริงว่าง = ไม่มีรูป (backend เก็บเป็น NULL)
       });
     } catch (err) {
       setError(err.message);
@@ -50,6 +56,28 @@ export default function ProductForm({ initial, onSave, onCancel }) {
           <input type="number" min="0" step="1" value={stock} onChange={(e) => setStock(e.target.value)} />
         </label>
       </div>
+
+      <label>
+        URL รูปภาพ (ไม่ใส่ก็ได้)
+        <input
+          type="url"
+          placeholder="https://example.com/shirt.jpg"
+          value={imageUrl}
+          onChange={(e) => {
+            setImageUrl(e.target.value);
+            setPreviewFailed(false);
+          }}
+        />
+      </label>
+      {imageUrl.trim() && (
+        <div className="thumb-preview">
+          {previewFailed ? (
+            <span className="muted">โหลดรูปไม่ได้ ตรวจสอบ URL อีกครั้ง</span>
+          ) : (
+            <img src={imageUrl.trim()} alt="ตัวอย่างรูปสินค้า" onError={() => setPreviewFailed(true)} />
+          )}
+        </div>
+      )}
 
       {error && <p className="error">{error}</p>}
 
