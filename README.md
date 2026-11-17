@@ -219,6 +219,3 @@ npm run test:coverage
 
 ---
 
-## 📄 ใบอนุญาต (License)
-
-โปรเจกต์นี้เผยแพร่ภายใต้ลิขสิทธิ์ [ISC License](LICENSE)
