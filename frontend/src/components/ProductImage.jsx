@@ -10,7 +10,7 @@ export default function ProductImage({ product, small = false }) {
   }, [product.imageUrl]);
 
   const cls = small ? 'thumb small' : 'thumb';
-  const initial = product.name ? product.name.charAt(0).toUpperCase() : '★';
+  const initial = product.name ? product.name.charAt(0).toUpperCase() : 'P';
 
   if (!product.imageUrl || failed) {
     return (

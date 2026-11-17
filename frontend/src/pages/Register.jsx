@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth.jsx';
+import { UserIcon, TagIcon, AlertIcon } from '../components/Icons.jsx';
 
 export default function Register() {
   const { tenant, register } = useAuth();
@@ -29,13 +30,17 @@ export default function Register() {
 
   return (
     <form className="card form narrow" onSubmit={submit}>
-      <div style={{ textAlign: 'center', marginBottom: '0.5rem' }}>
-        <div style={{ fontSize: '2.5rem', marginBottom: '0.35rem' }}>✨</div>
-        <h1>สมัครสมาชิก</h1>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.25rem' }}>
-          <span className="badge">🏬 แบรนด์: {tenant}</span>
+      <div style={{ textAlign: 'center', marginBottom: '0.75rem' }}>
+        <div style={{ display: 'inline-flex', justifyContent: 'center', alignItems: 'center', width: 52, height: 52, borderRadius: '50%', background: 'rgba(229, 9, 20, 0.15)', color: 'var(--primary)', marginBottom: '0.75rem' }}>
+          <UserIcon size={26} />
         </div>
-        <p className="muted" style={{ fontSize: '0.85rem', marginTop: '0.35rem' }}>
+        <h1 style={{ fontSize: '1.5rem', marginBottom: '0.35rem' }}>สมัครสมาชิก</h1>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.25rem' }}>
+          <span className="badge">
+            <TagIcon size={12} /> แบรนด์: {tenant}
+          </span>
+        </div>
+        <p className="muted" style={{ fontSize: '0.85rem', marginTop: '0.45rem' }}>
           บัญชีของคุณจะผูกกับร้านค้านี้โดยเฉพาะ
         </p>
       </div>
@@ -74,20 +79,21 @@ export default function Register() {
       </label>
 
       {error && (
-        <div className="notice" style={{ background: 'var(--danger-bg)', borderColor: 'var(--danger-border)', color: 'var(--danger)', padding: '0.65rem 0.85rem' }}>
-          <span>⚠️</span> {error}
+        <div className="notice" style={{ background: 'var(--danger-bg)', borderColor: 'var(--danger-border)', color: '#FF5A5F', padding: '0.65rem 0.85rem' }}>
+          <AlertIcon size={16} />
+          <span>{error}</span>
         </div>
       )}
 
       <button className="btn" disabled={busy} style={{ width: '100%', marginTop: '0.25rem' }}>
-        <span>🎉</span> {busy ? 'กำลังสมัครสมาชิก...' : 'สมัครสมาชิกทันที'}
+        <UserIcon size={15} /> {busy ? 'กำลังสมัครสมาชิก...' : 'สมัครสมาชิกทันที'}
       </button>
 
       <div style={{ textAlign: 'center', marginTop: '0.5rem' }}>
         <p className="muted hint">
           มีบัญชีอยู่แล้ว?{' '}
-          <Link to="/login" style={{ color: 'var(--primary)', fontWeight: 700 }}>
-            เข้าสู่ระบบที่นี่ 🔐
+          <Link to="/login" style={{ color: 'var(--primary)', fontWeight: 600 }}>
+            เข้าสู่ระบบที่นี่
           </Link>
         </p>
       </div>

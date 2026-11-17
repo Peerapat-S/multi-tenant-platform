@@ -153,14 +153,15 @@ npm run dev
 
 ระบบได้เตรียมข้อมูลจำลอง (Seed Data) สำหรับการทดสอบไว้ล่วงหน้า:
 
-| แบรนด์ (Tenant) | อีเมลผู้ดูแล (Admin) | รหัสผ่าน | สิทธิ์ (Role) |
+| แบรนด์ (Tenant) | อีเมล | รหัสผ่าน | สิทธิ์ (Role) |
 |---|---|---|---|
 | **brand-a** | `admin@brand-a.com` | `Admin1234` | `admin` |
 | **brand-b** | `admin@brand-b.com` | `Admin1234` | `admin` |
+| **ทุกแบรนด์** | `superadmin@platform.com` | `Admin1234` | `super_admin` |
 
-*(ในหน้า Login ฝั่ง Frontend มีปุ่ม **"⚡ Dev Auto-fill"** ให้คลิกเพื่อกรอกข้อมูลผู้ดูแลอัตโนมัติได้อย่างรวดเร็ว)*
+> **Super Admin**: ล็อกอินด้วย `superadmin@platform.com` / `Admin1234` ผ่านแบรนด์ใดก็ได้ แล้วระบบจะ redirect ไปยังหน้า **Super Admin Dashboard** (`/super-admin`) โดยอัตโนมัติ เพื่อจัดการทุกแบรนด์ในแพลตฟอร์ม
 
-> **หมายเหตุ**: ผู้ใช้สามารถกดปุ่ม "สมัครสมาชิก" (Register) เพื่อสร้างบัญชีลูกค้า (`customer`) ประจำแบรนด์นั้นๆ เพื่อทดสอบการกดสั่งซื้อสินค้าได้ทันที
+*(ในหน้า Login ฝั่ง Frontend มีปุ่ม **"⚡ Dev Auto-fill"** และ **"🛡️ Super Admin Auto-fill"** ให้คลิกเพื่อกรอกข้อมูลอัตโนมัติ)*
 
 ---
 

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { EditIcon, PlusIcon, AlertIcon } from './Icons.jsx';
 
 export default function ProductForm({ initial, onSave, onCancel }) {
   const [name, setName] = useState(initial?.name ?? '');
@@ -36,8 +37,8 @@ export default function ProductForm({ initial, onSave, onCancel }) {
 
   return (
     <form className="card form" onSubmit={submit} style={{ marginBottom: '2rem' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        <span style={{ fontSize: '1.4rem' }}>{initial ? '✏️' : '✨'}</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+        {initial ? <EditIcon size={20} /> : <PlusIcon size={20} />}
         <h2>{initial ? 'แก้ไขสินค้า' : 'เพิ่มสินค้าใหม่'}</h2>
       </div>
 
@@ -103,7 +104,7 @@ export default function ProductForm({ initial, onSave, onCancel }) {
       {imageUrl.trim() && (
         <div className="thumb-preview" style={{ flexDirection: 'column', gap: '0.35rem' }}>
           <span className="muted" style={{ fontSize: '0.82rem' }}>
-            {previewFailed ? '❌ ไม่สามารถโหลดรูปได้ ตรวจสอบ URL อีกครั้ง' : '🖼️ ตัวอย่างรูปสินค้า:'}
+            {previewFailed ? 'ไม่สามารถโหลดรูปได้ ตรวจสอบ URL อีกครั้ง' : 'ตัวอย่างรูปสินค้า:'}
           </span>
           {!previewFailed && (
             <img src={imageUrl.trim()} alt="ตัวอย่างรูปสินค้า" onError={() => setPreviewFailed(true)} />
@@ -113,13 +114,14 @@ export default function ProductForm({ initial, onSave, onCancel }) {
 
       {error && (
         <div className="notice" style={{ background: 'var(--danger-bg)', borderColor: 'var(--danger-border)', color: 'var(--danger)' }}>
-          <span>⚠️</span> {error}
+          <AlertIcon size={16} />
+          <span>{error}</span>
         </div>
       )}
 
       <div className="actions">
         <button type="submit" className="btn" disabled={saving}>
-          <span>💾</span> {saving ? 'กำลังบันทึก...' : 'บันทึกข้อมูลสินค้า'}
+          {saving ? 'กำลังบันทึก...' : 'บันทึกข้อมูลสินค้า'}
         </button>
         <button type="button" className="btn ghost" onClick={onCancel}>
           ยกเลิก

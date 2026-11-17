@@ -1,9 +1,10 @@
 const BASE = '/api';
 
 // เรียก backend: ใส่ X-Tenant-ID และ Authorization ให้ถ้ามีค่า
-export async function request(path, { method = 'GET', body, tenant, token } = {}) {
+// noTenant = true สำหรับ super_admin routes ที่ไม่ต้องการ X-Tenant-ID
+export async function request(path, { method = 'GET', body, tenant, token, noTenant = false } = {}) {
   const headers = {};
-  if (tenant) headers['X-Tenant-ID'] = tenant;
+  if (tenant && !noTenant) headers['X-Tenant-ID'] = tenant;
   if (token) headers.Authorization = `Bearer ${token}`;
   if (body !== undefined) headers['Content-Type'] = 'application/json';
 

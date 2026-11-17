@@ -17,7 +17,8 @@ function authenticate(req, res, next) {
   }
 
   // กัน token ของแบรนด์ A ไปใช้กับแบรนด์ B
-  if (payload.tenant_id !== req.tenant.id) {
+  // super_admin มีสิทธิ์ระดับแพลตฟอร์ม เข้าถึงได้ทุกแบรนด์หรือเส้นทางระดับระบบที่ไม่มี req.tenant
+  if (payload.role !== 'super_admin' && req.tenant && payload.tenant_id !== req.tenant.id) {
     return next(new HttpError(403, 'Token does not belong to this tenant'));
   }
 
@@ -25,13 +26,21 @@ function authenticate(req, res, next) {
   next();
 }
 
-// ใช้ต่อจาก authenticate เช่น authorize('admin')
+// ใช้ต่อจาก authenticate เช่น authorize('admin') หรือ authorize('super_admin')
 function authorize(...roles) {
   return (req, res, next) => {
-    if (!req.user || !roles.includes(req.user.role)) {
+    if (!req.user) {
       return next(new HttpError(403, 'Forbidden'));
     }
-    next();
+    // ตรงกับ role ที่ระบุ
+    if (roles.includes(req.user.role)) {
+      return next();
+    }
+    // super_admin สามารถทำหน้าที่แทน admin ได้
+    if (req.user.role === 'super_admin' && roles.includes('admin')) {
+      return next();
+    }
+    return next(new HttpError(403, 'Forbidden'));
   };
 }
 

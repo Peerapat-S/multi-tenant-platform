@@ -64,12 +64,20 @@ export function AuthProvider({ children }) {
   );
 
   // เรียก API พร้อม token; ถ้า token หมดอายุ/ไม่ถูกต้อง (401) ให้ออกจากระบบ
+  // noTenant = true ใช้สำหรับ super_admin calls ที่ไม่ต้องการ X-Tenant-ID
   const call = useCallback(
-    (path, options = {}) =>
-      request(path, { ...options, tenant: session.tenant, token: session.token }).catch((err) => {
+    (path, options = {}) => {
+      const { noTenant, ...rest } = options;
+      return request(path, {
+        ...rest,
+        tenant: noTenant ? undefined : session.tenant,
+        token: session.token,
+        noTenant,
+      }).catch((err) => {
         if (err.status === 401 && session.token) logout();
         throw err;
-      }),
+      });
+    },
     [session.tenant, session.token, logout]
   );
 

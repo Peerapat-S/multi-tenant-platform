@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../auth.jsx';
+import { useToast } from './Toast.jsx';
+import { CartIcon, LockIcon } from './Icons.jsx';
 
 // ปุ่มสั่งซื้อในการ์ดสินค้า: ต้อง login เป็นลูกค้า (customer) ถึงจะสั่งได้
 export default function BuyBox({ product, onOrdered }) {
   const { user, call } = useAuth();
+  const toast = useToast();
   const [qty, setQty] = useState('1');
   const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
   if (product.stock <= 0) return null;
@@ -15,7 +17,7 @@ export default function BuyBox({ product, onOrdered }) {
     return (
       <div className="buybox">
         <Link className="buybox-login-link" to="/login">
-          ✨ เข้าสู่ระบบเพื่อสั่งซื้อ
+          <LockIcon size={14} /> เข้าสู่ระบบเพื่อสั่งซื้อ
         </Link>
       </div>
     );
@@ -39,7 +41,6 @@ export default function BuyBox({ product, onOrdered }) {
   }
 
   async function order() {
-    setMessage('');
     setError('');
     const quantity = Number(qty);
     if (!Number.isInteger(quantity) || quantity < 1) return setError('จำนวนต้องเป็นจำนวนเต็มตั้งแต่ 1 ขึ้นไป');
@@ -51,11 +52,15 @@ export default function BuyBox({ product, onOrdered }) {
         method: 'POST',
         body: { items: [{ productId: product.id, quantity }] },
       });
-      setMessage('สั่งซื้อสำเร็จ! 🎉');
+      toast.show({
+        type: 'success',
+        title: 'สั่งซื้อสำเร็จ',
+        message: `${product.name} จำนวน ${quantity} ชิ้น ถูกบันทึกแล้ว`,
+      });
       setQty('1');
       onOrdered?.(); // ให้หน้าร้านโหลดสต็อกใหม่
     } catch (err) {
-      setError(err.message); // เช่น สต็อกไม่พอเพราะมีคนสั่งตัดหน้า
+      toast.show({ type: 'error', title: 'สั่งซื้อไม่สำเร็จ', message: err.message });
       onOrdered?.();
     } finally {
       setBusy(false);
@@ -99,13 +104,11 @@ export default function BuyBox({ product, onOrdered }) {
         </div>
 
         <button className="btn small" disabled={busy} onClick={order}>
-          <span>🛒</span> {busy ? 'กำลังสั่ง...' : 'สั่งซื้อ'}
+          <CartIcon size={14} /> {busy ? 'กำลังสั่ง...' : 'สั่งซื้อ'}
         </button>
       </div>
 
-      {message && <p className="success hint">{message}</p>}
-      {error && <p className="error hint">⚠️ {error}</p>}
+      {error && <p className="error hint">{error}</p>}
     </div>
   );
 }
-
