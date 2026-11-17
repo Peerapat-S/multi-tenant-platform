@@ -1,12 +1,7 @@
 const Product = require('../models/product');
 const HttpError = require('../utils/httpError');
 const isUuid = require('../utils/isUuid');
-
-function parsePaging({ page, limit } = {}) {
-  const l = Math.min(Math.max(parseInt(limit, 10) || 20, 1), 100);
-  const p = Math.max(parseInt(page, 10) || 1, 1);
-  return { page: p, limit: l, offset: (p - 1) * l };
-}
+const parsePaging = require('../utils/paging');
 
 const MAX_IMAGE_URL_LENGTH = 2048;
 

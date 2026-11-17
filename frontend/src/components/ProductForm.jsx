@@ -35,33 +35,63 @@ export default function ProductForm({ initial, onSave, onCancel }) {
   }
 
   return (
-    <form className="card form" onSubmit={submit}>
-      <h2>{initial ? 'แก้ไขสินค้า' : 'เพิ่มสินค้า'}</h2>
+    <form className="card form" onSubmit={submit} style={{ marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <span style={{ fontSize: '1.4rem' }}>{initial ? '✏️' : '✨'}</span>
+        <h2>{initial ? 'แก้ไขสินค้า' : 'เพิ่มสินค้าใหม่'}</h2>
+      </div>
 
       <label>
         ชื่อสินค้า
-        <input value={name} onChange={(e) => setName(e.target.value)} required />
+        <input
+          placeholder="เช่น เสื้อยืดมินิมอล Cotton 100%"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
       </label>
+
       <label>
-        รายละเอียด
-        <textarea rows="3" value={description} onChange={(e) => setDescription(e.target.value)} />
+        รายละเอียดสินค้า
+        <textarea
+          rows="3"
+          placeholder="ใส่รายละเอียด เนื้อผ้า ขนาด หรือจุดเด่นของสินค้า..."
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
       </label>
+
       <div className="row">
         <label>
           ราคา (บาท)
-          <input type="number" min="0" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} required />
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="0.00"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            required
+          />
         </label>
         <label>
-          จำนวนในสต็อก
-          <input type="number" min="0" step="1" value={stock} onChange={(e) => setStock(e.target.value)} />
+          จำนวนสินค้าในสต็อก
+          <input
+            type="number"
+            min="0"
+            step="1"
+            placeholder="0"
+            value={stock}
+            onChange={(e) => setStock(e.target.value)}
+          />
         </label>
       </div>
 
       <label>
-        URL รูปภาพ (ไม่ใส่ก็ได้)
+        URL รูปภาพ (ไม่บังคับ)
         <input
           type="url"
-          placeholder="https://example.com/shirt.jpg"
+          placeholder="https://images.unsplash.com/photo-..."
           value={imageUrl}
           onChange={(e) => {
             setImageUrl(e.target.value);
@@ -69,21 +99,27 @@ export default function ProductForm({ initial, onSave, onCancel }) {
           }}
         />
       </label>
+
       {imageUrl.trim() && (
-        <div className="thumb-preview">
-          {previewFailed ? (
-            <span className="muted">โหลดรูปไม่ได้ ตรวจสอบ URL อีกครั้ง</span>
-          ) : (
+        <div className="thumb-preview" style={{ flexDirection: 'column', gap: '0.35rem' }}>
+          <span className="muted" style={{ fontSize: '0.82rem' }}>
+            {previewFailed ? '❌ ไม่สามารถโหลดรูปได้ ตรวจสอบ URL อีกครั้ง' : '🖼️ ตัวอย่างรูปสินค้า:'}
+          </span>
+          {!previewFailed && (
             <img src={imageUrl.trim()} alt="ตัวอย่างรูปสินค้า" onError={() => setPreviewFailed(true)} />
           )}
         </div>
       )}
 
-      {error && <p className="error">{error}</p>}
+      {error && (
+        <div className="notice" style={{ background: 'var(--danger-bg)', borderColor: 'var(--danger-border)', color: 'var(--danger)' }}>
+          <span>⚠️</span> {error}
+        </div>
+      )}
 
       <div className="actions">
         <button type="submit" className="btn" disabled={saving}>
-          {saving ? 'กำลังบันทึก...' : 'บันทึก'}
+          <span>💾</span> {saving ? 'กำลังบันทึก...' : 'บันทึกข้อมูลสินค้า'}
         </button>
         <button type="button" className="btn ghost" onClick={onCancel}>
           ยกเลิก

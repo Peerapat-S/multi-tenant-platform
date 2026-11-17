@@ -29,31 +29,68 @@ export default function Register() {
 
   return (
     <form className="card form narrow" onSubmit={submit}>
-      <h1>สมัครสมาชิก</h1>
-      <p className="muted">แบรนด์: {tenant} (บัญชีใช้ได้เฉพาะแบรนด์นี้)</p>
+      <div style={{ textAlign: 'center', marginBottom: '0.5rem' }}>
+        <div style={{ fontSize: '2.5rem', marginBottom: '0.35rem' }}>✨</div>
+        <h1>สมัครสมาชิก</h1>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.25rem' }}>
+          <span className="badge">🏬 แบรนด์: {tenant}</span>
+        </div>
+        <p className="muted" style={{ fontSize: '0.85rem', marginTop: '0.35rem' }}>
+          บัญชีของคุณจะผูกกับร้านค้านี้โดยเฉพาะ
+        </p>
+      </div>
 
       <label>
-        ชื่อ
-        <input value={name} onChange={(e) => setName(e.target.value)} required autoFocus />
+        ชื่อ - นามสกุล หรือชื่อเล่น
+        <input
+          placeholder="เช่น สมชาย ใจดี"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          autoFocus
+        />
       </label>
+
       <label>
         อีเมล
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <input
+          type="email"
+          placeholder="yourname@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
       </label>
+
       <label>
         รหัสผ่าน (อย่างน้อย 8 ตัวอักษร)
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <input
+          type="password"
+          placeholder="รหัสผ่านอย่างน้อย 8 ตัวอักษร"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
       </label>
 
-      {error && <p className="error">{error}</p>}
+      {error && (
+        <div className="notice" style={{ background: 'var(--danger-bg)', borderColor: 'var(--danger-border)', color: 'var(--danger)', padding: '0.65rem 0.85rem' }}>
+          <span>⚠️</span> {error}
+        </div>
+      )}
 
-      <button className="btn" disabled={busy}>
-        {busy ? 'กำลังสมัคร...' : 'สมัครสมาชิก'}
+      <button className="btn" disabled={busy} style={{ width: '100%', marginTop: '0.25rem' }}>
+        <span>🎉</span> {busy ? 'กำลังสมัครสมาชิก...' : 'สมัครสมาชิกทันที'}
       </button>
 
-      <p className="muted hint">
-        มีบัญชีแล้ว? <Link to="/login">เข้าสู่ระบบ</Link>
-      </p>
+      <div style={{ textAlign: 'center', marginTop: '0.5rem' }}>
+        <p className="muted hint">
+          มีบัญชีอยู่แล้ว?{' '}
+          <Link to="/login" style={{ color: 'var(--primary)', fontWeight: 700 }}>
+            เข้าสู่ระบบที่นี่ 🔐
+          </Link>
+        </p>
+      </div>
     </form>
   );
 }

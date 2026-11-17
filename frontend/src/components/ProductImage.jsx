@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-// แสดงรูปสินค้า ถ้าไม่มีรูปหรือโหลดไม่ขึ้น จะแสดงตัวอักษรแรกของชื่อแทน
+// แสดงรูปสินค้า ถ้าไม่มีรูปหรือโหลดไม่ขึ้น จะแสดงตัวอักษรแรกพร้อมสไตล์ playful
 export default function ProductImage({ product, small = false }) {
   const [failed, setFailed] = useState(false);
 
@@ -10,10 +10,16 @@ export default function ProductImage({ product, small = false }) {
   }, [product.imageUrl]);
 
   const cls = small ? 'thumb small' : 'thumb';
+  const initial = product.name ? product.name.charAt(0).toUpperCase() : '★';
 
   if (!product.imageUrl || failed) {
-    return <div className={cls}>{product.name.charAt(0).toUpperCase()}</div>;
+    return (
+      <div className={cls} title={product.name}>
+        <span>{initial}</span>
+      </div>
+    );
   }
+
   return (
     <img
       className={`${cls} img`}
@@ -24,3 +30,4 @@ export default function ProductImage({ product, small = false }) {
     />
   );
 }
+

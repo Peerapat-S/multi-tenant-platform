@@ -6,6 +6,7 @@ import Storefront from './pages/Storefront.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import AdminProducts from './pages/AdminProducts.jsx';
+import Orders from './pages/Orders.jsx';
 
 // แต่ละแบรนด์ได้สีธีมต่างกัน (คำนวณจาก slug) เพื่อให้เห็นชัดว่าเปลี่ยนแบรนด์แล้ว
 function hueOf(slug) {
@@ -21,6 +22,13 @@ function RequireAdmin({ children }) {
   if (user.role !== 'admin') {
     return <div className="notice">หน้านี้สำหรับผู้ดูแล (admin) เท่านั้น</div>;
   }
+  return children;
+}
+
+function RequireLogin({ children }) {
+  const { user } = useAuth();
+  const location = useLocation();
+  if (!user) return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   return children;
 }
 
@@ -44,6 +52,14 @@ export default function App() {
             <RequireAdmin>
               <AdminProducts key={tenant} />
             </RequireAdmin>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <RequireLogin>
+              <Orders key={tenant} />
+            </RequireLogin>
           }
         />
         <Route path="*" element={<Navigate to="/" replace />} />

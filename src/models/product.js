@@ -62,4 +62,28 @@ async function remove(tenantId, id) {
   return rowCount > 0;
 }
 
-module.exports = { list, findById, create, update, remove };
+// ---- ใช้ภายใน transaction ของคำสั่งซื้อ (รับ db = client ของ transaction) ----
+
+// ล็อกแถวสินค้า (FOR UPDATE) เพื่อให้คำสั่งซื้อที่เข้ามาพร้อมกันต้องรอกัน ไม่ตัดสต็อกซ้อน
+// เรียงตาม id เสมอ เพื่อไม่ให้สอง transaction ล็อกสินค้าคนละลำดับแล้ว deadlock
+async function lockByIds(db, tenantId, ids) {
+  const { rows } = await db.query(
+    `SELECT ${COLUMNS} FROM products
+      WHERE tenant_id = $1 AND id = ANY($2::uuid[])
+      ORDER BY id
+      FOR UPDATE`,
+    [tenantId, ids]
+  );
+  return rows;
+}
+
+// delta เป็นลบ = ตัดสต็อก, เป็นบวก = คืนสต็อก (CHECK stock >= 0 ในตารางเป็นด่านสุดท้ายกันสต็อกติดลบ)
+async function adjustStock(db, tenantId, id, delta) {
+  const { rowCount } = await db.query(
+    'UPDATE products SET stock = stock + $3 WHERE tenant_id = $1 AND id = $2',
+    [tenantId, id, delta]
+  );
+  return rowCount > 0;
+}
+
+module.exports = { list, findById, create, update, remove, lockByIds, adjustStock };
